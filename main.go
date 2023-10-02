@@ -45,12 +45,25 @@ func homePage(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("I am home page")
 }
 func getTasks(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type","application/")
+	w.Header().Set("Content-Type", "application/")
 	json.NewEncoder(w).Encode(tasks)
 }
 func getTask(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("I am home page")
+	taskId := mux.Vars(r)
+	flag := false
+	for i := 0; i < len(tasks); i++ {
+		if taskId["id"] == tasks[i].ID {
+			json.NewEncoder(w).Encode(tasks[i])
+			flag = true
+			break
+		}
+	}
+	if !flag {
+		json.NewEncoder(w).Encode(map[string]string{"status": "Error"})
+	}
+
 }
+
 func createTask(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("I am home page")
 }
@@ -60,8 +73,6 @@ func deleteTask(w http.ResponseWriter, r *http.Request) {
 func updateTask(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("I am home page")
 }
-
-
 
 func handleRoutes() {
 	router := mux.NewRouter()
