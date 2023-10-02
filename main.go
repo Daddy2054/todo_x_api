@@ -45,7 +45,7 @@ func homePage(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("I am home page")
 }
 func getTasks(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/")
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(tasks)
 }
 func getTask(w http.ResponseWriter, r *http.Request) {
