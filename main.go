@@ -1,9 +1,11 @@
 package main
 
 import (
+	"crypto/rand"
 	"encoding/json"
 	"fmt"
 	"log"
+	"math/big"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -65,8 +67,15 @@ func getTask(w http.ResponseWriter, r *http.Request) {
 }
 
 func createTask(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("I am home page")
+	w.Header().Set("Content-Type", "application/json")
+	var task Tasks
+	_ = json.NewDecoder(r.Body).Decode(&tasks)
+
+	maxNum := big.NewInt(10000000000000000)
+	randNum, _ := rand.Int(rand.Reader, maxNum.Add(maxNum, big.NewInt(1)))
+	task.ID = randNum.String()
 }
+
 func deleteTask(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("I am home page")
 }
