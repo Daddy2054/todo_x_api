@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"math/big"
 	"net/http"
@@ -69,15 +70,31 @@ func getTask(w http.ResponseWriter, r *http.Request) {
 }
 
 func createTask(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	defer r.Body.Close()
+//	fmt.Println(r.Body)
+
+	 w.Header().Set("Content-Type", "application/json")
+
+	// _ = json.NewDecoder(r.Body).Decode(&task)
+	body, err := io.ReadAll(r.Body)
+
+	if err != nil {
+		log.Fatalln(err)
+	}
+
 	var task Tasks
-	_ = json.NewDecoder(r.Body).Decode(&tasks)
+	//var book models.Book
+	json.Unmarshal(body, &task)
+	//fmt.Println(body)
+
+	fmt.Println(task)
+	fmt.Println(tasks)
 
 	maxNum := big.NewInt(10000000000000000)
 	randNum, _ := rand.Int(rand.Reader, maxNum.Add(maxNum, big.NewInt(1)))
 	task.ID = randNum.String()
 	tasks = append(tasks, task)
-	json.NewEncoder(w).Encode(task)
+	json.NewEncoder(w).Encode("Created")
 }
 
 func deleteTask(w http.ResponseWriter, r *http.Request) {
@@ -100,6 +117,6 @@ func handleRoutes() {
 }
 func main() {
 	allTasks()
-	fmt.Println("Hello there")
+	//	fmt.Println("Hello there")
 	handleRoutes()
 }
