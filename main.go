@@ -40,7 +40,9 @@ func allTasks() {
 		Date:       "2022-03-22",
 	}
 	tasks = append(tasks, task1, task2, task3)
-	fmt.Println("your tasks are", tasks)
+	// fmt.Println("your tasks are", tasks)
+	fmt.Println("Got all tasks")
+
 }
 
 func homePage(w http.ResponseWriter, r *http.Request) {
@@ -74,6 +76,8 @@ func createTask(w http.ResponseWriter, r *http.Request) {
 	maxNum := big.NewInt(10000000000000000)
 	randNum, _ := rand.Int(rand.Reader, maxNum.Add(maxNum, big.NewInt(1)))
 	task.ID = randNum.String()
+	tasks = append(tasks, task)
+	json.NewEncoder(w).Encode(task)
 }
 
 func deleteTask(w http.ResponseWriter, r *http.Request) {
