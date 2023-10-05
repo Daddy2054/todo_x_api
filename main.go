@@ -8,6 +8,7 @@ import (
 	"log"
 	"math/big"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/mux"
 )
@@ -93,6 +94,8 @@ func createTask(w http.ResponseWriter, r *http.Request) {
 	maxNum := big.NewInt(10000000000000000)
 	randNum, _ := rand.Int(rand.Reader, maxNum.Add(maxNum, big.NewInt(1)))
 	task.ID = randNum.String()
+	currentTime :=time.Now().Format("01-02-2006")
+	task.Date = currentTime
 	tasks = append(tasks, task)
 	json.NewEncoder(w).Encode("Created")
 }
