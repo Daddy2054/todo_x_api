@@ -55,6 +55,7 @@ func getTasks(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(tasks)
 }
 func getTask(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 	taskId := mux.Vars(r)
 	flag := false
 	for i := 0; i < len(tasks); i++ {
