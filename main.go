@@ -56,10 +56,10 @@ func getTasks(w http.ResponseWriter, r *http.Request) {
 }
 func getTask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	taskId := mux.Vars(r)
+	params := mux.Vars(r)
 	flag := false
 	for i := 0; i < len(tasks); i++ {
-		if taskId["id"] == tasks[i].ID {
+		if params["id"] == tasks[i].ID {
 			json.NewEncoder(w).Encode(tasks[i])
 			flag = true
 			break
@@ -98,7 +98,8 @@ func createTask(w http.ResponseWriter, r *http.Request) {
 	currentTime := time.Now().Format("01-02-2006")
 	task.Date = currentTime
 	tasks = append(tasks, task)
-	json.NewEncoder(w).Encode("Created")
+	json.NewEncoder(w).Encode(task)
+	//	json.NewEncoder(w).Encode("Created")
 }
 
 func deleteTask(w http.ResponseWriter, r *http.Request) {
@@ -110,11 +111,13 @@ func updateTask(w http.ResponseWriter, r *http.Request) {
 	flag := false
 	for index, item := range tasks {
 		if item.ID == params["id"] {
-			fmt.Println("The id is ", item.ID)
+	//		fmt.Println("The id is ", item.ID)
 			tasks = append(tasks[:index], tasks[index+1:]...)
 			var task Tasks
 			_ = json.NewDecoder(r.Body).Decode(&task)
 			task.ID = params["id"]
+			currentTime := time.Now().Format("01-02-2006")
+			task.Date = currentTime
 			tasks = append(tasks, task)
 			flag = true
 			json.NewEncoder(w).Encode(task)
@@ -130,10 +133,10 @@ func handleRoutes() {
 	router := mux.NewRouter()
 	router.HandleFunc("/", homePage).Methods("GET")
 	router.HandleFunc("/gettasks", getTasks).Methods("GET")
-	router.HandleFunc("/gettask/{id}", getTask).Methods("GET")
+	router.HandleFunc("/gettask/", getTask).Queries("id","{id}").Methods("GET")
 	router.HandleFunc("/create", createTask).Methods("POST")
 	router.HandleFunc("/delete/{id}", deleteTask).Methods("DELETE")
-	router.HandleFunc("/update/{id}", updateTask).Methods("PUT")
+	router.HandleFunc("/update/", updateTask).Queries("id","{id}").Methods("PUT")
 
 	log.Fatal(http.ListenAndServe(":8082", router))
 }
