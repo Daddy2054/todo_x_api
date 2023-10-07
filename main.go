@@ -103,7 +103,20 @@ func createTask(w http.ResponseWriter, r *http.Request) {
 }
 
 func deleteTask(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("I am home page")
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	flag := false
+	for index, item := range tasks {
+		if item.ID == params["id"] {
+			tasks = append(tasks[:index], tasks[index+1:]...)
+			flag = true
+		json.NewEncoder(w).Encode(map[string]string{"status": "Success"})
+		return
+		}
+	}
+	if !flag {
+		json.NewEncoder(w).Encode(map[string]string{"status": "Error"})
+	}
 }
 func updateTask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
@@ -135,7 +148,7 @@ func handleRoutes() {
 	router.HandleFunc("/gettasks", getTasks).Methods("GET")
 	router.HandleFunc("/gettask/", getTask).Queries("id","{id}").Methods("GET")
 	router.HandleFunc("/create", createTask).Methods("POST")
-	router.HandleFunc("/delete/{id}", deleteTask).Methods("DELETE")
+	router.HandleFunc("/delete/", deleteTask).Queries("id","{id}").Methods("DELETE")
 	router.HandleFunc("/update/", updateTask).Queries("id","{id}").Methods("PUT")
 
 	log.Fatal(http.ListenAndServe(":8082", router))
